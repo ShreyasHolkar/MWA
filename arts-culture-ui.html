@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art & Culture Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logo span {
+            color: #4285F4;
+        }
+
+        .nav-register {
+            padding: 10px 18px;
+            background-color: #4285F4;
+            color: white;
+            font-weight: 600;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center; 
+        }
+
+        .nav-register:hover {
+            background-color: #3367D6;
+        }
+
+        
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .nav-item {
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 24px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .hero {
+            height: 70vh;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+            margin-bottom: 40px;
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: transform 10s ease-in-out;
+        }
+        
+        .hero-text {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            color: white;
+            max-width: 600px;
+        }
+        
+        .hero-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        
+        .explore-btn {
+            background-color: white;
+            color: #333;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .explore-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 50px 0 30px;
+        }
+        
+        .categories {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px 30px;
+            gap: 20px;
+            scrollbar-width: none;
+        }
+        
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category {
+            min-width: 180px;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .category:hover {
+            transform: translateY(-5px);
+        }
+        
+        .category img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .category-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            padding: 10px;
+            font-weight: 500;
+        }
+        
+        .artworks {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 0 30px 50px;
+        }
+        
+        .artwork {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            background-color: white;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .artwork:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .artwork-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .artwork-info {
+            padding: 15px;
+        }
+        
+        .artwork-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .artwork-artist {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .artwork-details {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            padding: 50px;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
+        
+        .modal-image {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            background-color: #000;
+        }
+        
+        .modal-info {
+            padding: 30px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .modal-artist {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        
+        .modal-description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .virtual-tour-btn {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .virtual-tour-btn:hover {
+            background-color: #3367D6;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-text {
+                left: 20px;
+                bottom: 20px;
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .modal {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Art <span>&</span> Culture</div>
+        <div class="nav-items">
+            <div class="nav-item">Explore</div>
+            <a href="gallery.html" class="nav-item">Gallery</a>
+            <div class="nav-item">Artists</div>
+            <div class="nav-item">Virtual Tours</div>
+            <a href="artist-registration.html" class="nav-register">REGISTER</a>
+        </div>        
+    </header>
+    
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Search for artworks, artists, or collections...">
+    </div>
+    
+    <div class="hero">
+        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1900&q=80" alt="Featured Artwork" class="hero-image" id="heroImage">
+        <div class="hero-text">
+            <h1 class="hero-title">Explore the World's Artistic Heritage</h1>
+            <p class="hero-subtitle">Discover masterpieces from museums and cultural institutions around the globe.</p>
+            <button class="explore-btn">Start Exploring</button>
+        </div>
+    </div>
+    
+    <h2 class="section-title">Popular Categories</h2>
+    
+    <div class="categories">
+        <div class="category">
+            <img src="D:/Personal/T.Y/MWA/MiniProj/Images/Renaissance.webp" alt="Renaissance" class="category-img">
+            <div class="category-label">Renaissance</div>
+        </div>
+        <div class="category">
+            <img src="D:/Personal/T.Y/MWA/MiniProj/Images/Impressionism.jpg" alt="Impressionism" class="category-img">
+            <div class="category-label">Impressionism</div>
+        </div>
+        <div class="category">
+            <img src="D:/Personal/T.Y/MWA/MiniProj/Images/Cubism.webp" alt="Cubism" class="category-img">
+            <div class="category-label">Cubism</div>
+        </div>
+        <div class="category">
+            <img src="D:/Personal/T.Y/MWA/MiniProj/Images/ModernArt.jpeg" alt="Modern Art" class="category-img">
+            <div class="category-label">Modern Art</div>
+        </div>
+        <div class="category">
+            <img src="D:/Personal/T.Y/MWA/MiniProj/Images/Surrealism.webp" alt="Surrealism" class="category-img">
+            <div class="category-label">Surrealism</div>
+        </div>
+        <div class="category">
+            <img src="D:/Personal/T.Y/MWA/MiniProj/Images/Contemporary.jpeg " alt="Contemporary" class="category-img">
+            <div class="category-label">Contemporary</div>
+        </div>
+    </div>
+    
+    <h2 class="section-title">Featured Artworks</h2>
+    
+    <div class="artworks" id="artworksContainer">
+        <!-- Artworks will be generated by JavaScript -->
+    </div>
+    
+    <div class="modal" id="artworkModal">
+        <div class="modal-content">
+            <div class="modal-close" id="modalClose">×</div>
+            <!-- This img tag must exist and have the correct ID -->
+            <img src="" alt="Artwork" class="modal-image" id="modalImage">
+            <div class="modal-info">
+                <h2 class="modal-title" id="modalTitle">Artwork Title</h2>
+                <div class="modal-artist" id="modalArtist">Artist Name, Year</div>
+                <p class="modal-description" id="modalDescription">
+                    Artwork description goes here.
+                </p>
+                <button class="virtual-tour-btn">Start Virtual Tour</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample data - EASY TO EDIT: You can change these image URLs anytime
+        const artworksData = [
+            {
+                id: 1,
+                title: "The Starry Night",
+                artist: "Vincent van Gogh",
+                year: 1889,
+                details: "Oil on canvas, 73.7 cm x 92.1 cm",
+                image: "https://shop.discovernewfields.org/cdn/shop/files/VGPTSTARRY.jpg?v=1686767362&width=1000",
+                description: `The Starry Night is an oil on canvas painting by Dutch Post-Impressionist painter Vincent van Gogh. Painted in June 1889, it depicts the view from the east-facing window of his asylum room at Saint-Rémy-de-Provence, just before sunrise, with the addition of an imaginary village.
+                *The Starry Night* is a visionary masterpiece blending observation and imagination. 
+                The swirling sky—inspired by the view from his window—features a stylized cypress tree (symbolizing death) and a sleepy village under a cosmic whirlpool. 
+                Van Gogh's thick, expressive brushstrokes (*impasto*) and bold use of ultramarine and yellow create a dynamic tension between tranquility and turbulence. 
+                Though he considered it a "failure," it's now one of the most recognized paintings in history, embodying Post-Impressionism's emotional depth.`
+            },
+            {
+                id: 2,
+                title: "Mona Lisa",
+                artist: "Leonardo da Vinci",
+                year: 1503,
+                details: "Oil on poplar panel, 77 cm x 53 cm",
+                image: "https://cdn.britannica.com/24/189624-050-F3C5BAA9/Mona-Lisa-oil-wood-panel-Leonardo-da.jpg",
+                description: `The Mona Lisa is a half-length portrait painting by Italian artist Leonardo da Vinci.
+                Leonardo's *Mona Lisa* revolutionized portraiture with its *sfumato* technique—layers of translucent glaze creating her enigmatic smile and smoky background. 
+                Likely depicting Lisa Gherardini, a Florentine merchant's wife, her poised gaze and pyramidal composition exude Renaissance harmony. 
+                Stolen in 1911 and later recovered, her fame skyrocketed, making the Louvre's bulletproof case a pilgrimage site. 
+                The painting's subtle gradients and atmospheric perspective showcase Leonardo's scientific curiosity about human optics and geology. Considered an archetypal masterpiece of the Italian Renaissance, it has been described as 'the best known, the most visited, the most written about, the most sung about, the most parodied work of art in the world'.`
+            },
+            {
+                id: 3,
+                title: "The Persistence of Memory",
+                artist: "Salvador Dalí",
+                year: 1931,
+                details: "Oil on canvas, 24 cm x 33 cm",
+                image: "https://cdn.britannica.com/10/182610-050-77811599/The-Persistence-of-Memory-canvas-collection-Salvador-1931.jpg",
+                description: `The Persistence of Memory is a 1931 painting by artist Salvador Dalí, and is one of his most recognizable works. The well-known surrealist piece introduced the image of the soft melting pocket watch.
+                Dalí’s surrealist icon features melting pocket watches draped over a barren Catalonian landscape, symbolizing time’s fluidity in dreams. 
+                Inspired by Einstein’s theory of relativity and Camembert cheese melting in the sun, the ants on the orange clock represent decay. 
+                The distorted face in the center is a self-portrait, morphing into a cliff at Cap de Creus. 
+                Painted when Dalí was 27, this small but potent work challenges reality’s rigidity, becoming the defining image of Surrealism.`
+            },
+            {
+                id: 4,
+                title: "Guernica",
+                artist: "Pablo Picasso",
+                year: 1937,
+                details: "Oil on canvas, 349 cm × 776 cm",
+                image: "https://smarthistory.org/wp-content/uploads/2015/08/PicassoGuernica.jpg",
+                description: `Guernica is a large 1937 oil painting on canvas by Spanish artist Pablo Picasso. One of his best-known works, it is regarded by many art critics as the most moving and powerful anti-war painting in history. It is exhibited in the Museo Reina Sofía in Madrid.
+                Picasso’s monumental black-and-white mural condemns the Nazi bombing of Guernica during the Spanish Civil War. 
+                The chaotic composition—filled with screaming women, a dismembered soldier, and a bull (symbolizing Franco’s brutality)—uses Cubist fragmentation to amplify horror. 
+                Painted in just 35 days for the 1937 Paris World’s Fair, it became a universal anti-war symbol. 
+                Today, its touring is banned to preserve the fragile canvas, and a tapestry copy hangs at the UN Security Council as a silent protest.`
+            },
+            {
+                id: 5,
+                title: "The Night Watch",
+                artist: "Rembrandt van Rijn",
+                year: 1642,
+                details: "Oil on canvas, 363 cm × 437 cm",
+                image: "https://cdn.britannica.com/98/182298-050-ECE18F92/Frans-Banninck-Cocq-Militia-Company-of-District.jpg",
+                description: `The Night Watch is a 1642 painting by Rembrandt van Rijn. It is in the collection of the Amsterdam Museum but is prominently displayed in the Rijksmuseum as the best-known painting in its collection. The Night Watch is one of the most famous Dutch Golden Age paintings.
+                Rembrandt’s colossal group portrait of Amsterdam’s civic guards redefines Baroque dynamism. 
+                Unlike static militia portraits, *The Night Watch* shows Captain Cocq’s company springing into action, lit by golden chiaroscuro. 
+                The girl in yellow (the militia’s mascot) and the musket’s flash add narrative layers. 
+                Trimmed in 1715 to fit Amsterdam’s town hall, it survived vandalism and a Nazi theft attempt. 
+                Its restoration (2019–2024) used AI to reconstruct lost figures, revealing Rembrandt’s original vision.`
+            },
+            {
+                id: 6,
+                title: "Water Lilies",
+                artist: "Claude Monet",
+                year: 1919,
+                details: "Oil on canvas, 100 cm × 200 cm",
+                image: "https://images.barrons.com/im-25599766?width=700&size=2.0317460317460316&pixel_ratio=1.5",
+                description: `Water Lilies (Nymphéas) is a series of approximately 250 oil paintings by French Impressionist Claude Monet. The paintings depict his flower garden at his home in Giverny, and were the main focus of his artistic production during the last thirty years of his life.
+                Monet’s *Water Lilies* series (250+ paintings) captures his Giverny garden pond in hypnotic abstraction. 
+                Painted while nearly blind from cataracts, these late works dissolve reality into strokes of violet, green, and sky-blue reflections. 
+                The Met’s version immerses viewers in a 2-meter panorama with no horizon—a radical departure from perspective. 
+                Monet called these canvases his "Sistine Chapel," and they inspired Abstract Expressionists like Pollock. 
+                The garden, restored after WWII, remains a pilgrimage site for art lovers.`
+            },
+            {
+                id: 7,
+                title: "The Birth of Venus",
+                artist: "Sandro Botticelli",
+                year: 1486,
+                details: "Tempera on canvas, 172.5 cm × 278.9 cm",
+                image: "https://www.visituffizi.org/img/artworks/botticelli-birth-venus.jpg",
+                description: `The Birth of Venus depicts the goddess Venus arriving at the shore after her birth, having emerged from the sea fully-grown. One of the most famous works of the Italian Renaissance, it symbolizes beauty and divine love.
+                "A face twisted in existential agony under a blood-orange sky, The Scream is more than a painting—it’s a primal howl on canvas. 
+                Munch’s iconic figure, genderless and skeletal, clutches its head as swirling lines drag the viewer into its vortex of anxiety. 
+                Inspired by a panic attack he suffered at sunset (‘I felt the infinite scream of nature,’ he wrote), the work pioneered Expressionism by prioritizing raw emotion over realism.`
+            },
+            // NEW ARTWORK 2 - "The Scream" by Edvard Munch
+            {
+                id: 8,
+                title: "The Scream",
+                artist: "Edvard Munch",
+                year: 1893,
+                details: "Tempera and crayon on cardboard, 91 cm × 73.5 cm",
+                image: "https://cdn.britannica.com/32/2832-050-9DD1D041/The-Scream-casein-cardboard-Edvard-Munch-National-1893.jpg",
+                description: `The Scream is one of the most iconic images in art history, representing human anxiety and existential dread. Munch created four versions, and this one is housed at the Munch Museum in Oslo.
+                "Venus, goddess of love, floats ashore on a seashell, her golden hair cascading like silk. 
+                Botticelli’s masterpiece—commissioned by the Medici family—reimagines classical myth with Renaissance grace. 
+                The wind gods Zephyr and Aura blow her toward land, where a nymph waits with a flower-strewn cloak.`
+            }
+        ];
+        
+        // Populate artworks - This function uses the image URLs from artworksData
+        function populateArtworks() {
+            const artworksContainer = document.getElementById('artworksContainer');
+            
+            artworksData.forEach(artwork => {
+                const artworkElement = document.createElement('div');
+                artworkElement.className = 'artwork';
+                artworkElement.setAttribute('data-id', artwork.id);
+                
+                artworkElement.innerHTML = `
+                    <img src="${artwork.image}" alt="${artwork.title}" class="artwork-image">
+                    <div class="artwork-info">
+                        <div class="artwork-title">${artwork.title}</div>
+                        <div class="artwork-artist">${artwork.artist}, ${artwork.year}</div>
+                        <div class="artwork-details">${artwork.details}</div>
+                    </div>
+                `;
+                
+                artworksContainer.appendChild(artworkElement);
+                
+                // Add click event to show modal
+                artworkElement.addEventListener('click', () => {
+                    showArtworkModal(artwork);
+                });
+            });
+        }
+        
+        // Show artwork modal
+        // Show artwork modal (UPDATED VERSION)
+        function showArtworkModal(artwork) {
+            const modal = document.getElementById('artworkModal');
+            const modalImage = document.getElementById('modalImage'); // Add this line
+            const modalTitle = document.getElementById('modalTitle');
+            const modalArtist = document.getElementById('modalArtist');
+            const modalDescription = document.getElementById('modalDescription');
+
+            // Set the image source dynamically
+            modalImage.src = artwork.image; // This was missing!
+            modalImage.alt = artwork.title; // Optional: update alt text
+
+            modalTitle.textContent = artwork.title;
+            modalArtist.textContent = `${artwork.artist}, ${artwork.year}`;
+            modalDescription.textContent = artwork.description;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close modal
+        document.getElementById('modalClose').addEventListener('click', () => {
+            document.getElementById('artworkModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Hero image animation effect
+        function animateHeroImage() {
+            const heroImage = document.getElementById('heroImage');
+            heroImage.style.transform = 'scale(1.1)';
+            
+            setTimeout(() => {
+                heroImage.style.transform = 'scale(1)';
+            }, 10000);
+        }
+        
+        // Initialize the page
+        window.onload = function() {
+            populateArtworks();
+            setInterval(animateHeroImage, 20000);
+        };
+        
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const artworks = document.querySelectorAll('.artwork');
+            
+            artworks.forEach(artwork => {
+                const id = artwork.getAttribute('data-id');
+                const artworkData = artworksData.find(a => a.id == id);
+                
+                const titleMatch = artworkData.title.toLowerCase().includes(searchTerm);
+                const artistMatch = artworkData.artist.toLowerCase().includes(searchTerm);
+                
+                if (titleMatch || artistMatch) {
+                    artwork.style.display = 'block';
+                } else {
+                    artwork.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
